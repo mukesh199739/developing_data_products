@@ -1,0 +1,87 @@
+present
+========================================================
+author: Mukesh kumar
+date:   24/10/19
+autosize: true
+
+First Slide
+========================================================
+
+Introduction
+
+The Mtcars Plotter is an plotting tool for an exploratory data analysis of the mtcars data set in R. It allows you display diffrent dimensions of the dataset and plot it agains an axis of choice. Furthermore you can display a smoother and facet the rows and columns.
+
+The Mtcars Dataset
+
+The data was extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973 -74 models).
+
+A data frame with 32 observations on 11 (numeric) variables.
+
+    mpg Miles/(US) gallon
+    cyl Number of cylinders
+    disp Displacement (cu.in.)
+
+UI Slide With Code
+========================================================
+
+```{r}
+
+
+library(shiny)
+library(ggplot2)
+dataset <- mtcars
+shinyUI(pageWithSidebar(
+    headerPanel("Mtcars Plotter"),
+    sidebarPanel(
+        sliderInput('sampleSize', 'Sample Size', min=10, max=nrow(dataset), value=min(10, nrow(dataset)), step=5, round=0),
+        selectInput('x', 'X', names(dataset)), selectInput('y', 'Y', names(dataset), names(dataset)[[2]]),
+        selectInput('color', 'Color', c('None', names(dataset))),
+        checkboxInput('jitter', 'Jitter'),
+        checkboxInput('smooth', 'Smooth'),
+        selectInput('facet_row', 'Facet Row', c(None='.', names(dataset))),
+        selectInput('facet_col', 'Facet Column', c(None='.', names(dataset))) ),
+    mainPanel(
+        plotOutput('plot')
+        )
+    )
+)
+
+
+```
+
+Server Slide With Code
+========================================================
+
+```{r}
+
+library(shiny)
+library(ggplot2)
+shinyServer(function(input, output) {
+    dataset <- reactive( {
+        mtcars[sample(nrow(mtcars), input$sampleSize),]
+        })
+    output$plot <- reactivePlot(function() { 
+        p <- ggplot(dataset(), aes_string(x=input$x, y=input$y)) + geom_point()
+        if (input$color != 'None')
+            p <- p + aes_string(color=input$color)
+            facets <- paste(input$facet_row, '~', input$facet_col)
+        if (facets != '. ~ .')
+            p <- p + facet_grid(facets)
+        if (input$jitter)
+            p <- p + geom_jitter()
+        if (input$smooth)
+            p <- p + geom_smooth()
+            print(p) }, height=600
+        )
+    }
+
+```
+
+
+Slide With Plot
+========================================================
+
+Sample Grafic generated from the app
+
+This is a sample analysis performed with the shiny app. It shows the miles per US gallon on the x-axis, and horse power on the y-axis. The color is representing the weight (lighter is heavier). The plot is in 2 facet rows, upper plot shows cars with automatic transmission the lower with manual transmission.
+

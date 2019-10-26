@@ -1,0 +1,13 @@
+name: week4
+title: week4
+username:
+account: mukeshkumar199739
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1383023
+bundleId: 2537493
+url: https://mukeshkumar199739.shinyapps.io/week4/
+when: 1572062023.33542
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: present.md|present.Rpres|present-figure/unnamed-chunk-2-1.png
